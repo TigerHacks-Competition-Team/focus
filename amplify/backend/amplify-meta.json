@@ -18,6 +18,22 @@
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
       "customAuth": false,
+      "output": {
+        "CreatedSNSRole": "arn:aws:iam::654610203253:role/snsundefined120236-dev",
+        "AppClientSecret": "1cr35uaoav6qu7sf88fnnf4u0ait00at0m70h2mlj8j1sd66nmj2",
+        "UserPoolId": "us-east-1_KihGulSEX",
+        "AppClientIDWeb": "7jt7k48miov94ult0dqgbd34b1",
+        "AppClientID": "5th438pdt1a8jlds41e7veais8",
+        "IdentityPoolId": "us-east-1:45091318-8c4e-4f04-ab4c-6250fcd2e19a",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:654610203253:userpool/us-east-1_KihGulSEX",
+        "IdentityPoolName": "authenticatordf03bc0b_identitypool_df03bc0b__dev",
+        "UserPoolName": "authenticatordf03bc0b_userpool_df03bc0b"
+      },
+      "lastPushTimeStamp": "2021-12-11T20:00:29.858Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-authenticator-dev-120236-deployment/amplify-cfn-templates/auth/authenticatordf03bc0b-cloudformation-template.json",
+        "logicalId": "authauthenticatordf03bc0b"
+      },
       "frontendAuthConfig": {
         "socialProviders": [],
         "usernameAttributes": [],
@@ -35,24 +51,7 @@
         "verificationMechanisms": [
           "EMAIL"
         ]
-      },
-      "providerMetadata": {
-        "s3TemplateURL": "https://s3.amazonaws.com/amplify-authenticator-dev-120236-deployment/amplify-cfn-templates/auth/authenticatordf03bc0b-cloudformation-template.json",
-        "logicalId": "authauthenticatordf03bc0b"
-      },
-      "lastPushTimeStamp": "2021-12-11T18:03:44.938Z",
-      "output": {
-        "AppClientSecret": "1cr35uaoav6qu7sf88fnnf4u0ait00at0m70h2mlj8j1sd66nmj2",
-        "UserPoolId": "us-east-1_KihGulSEX",
-        "AppClientIDWeb": "7jt7k48miov94ult0dqgbd34b1",
-        "AppClientID": "5th438pdt1a8jlds41e7veais8",
-        "IdentityPoolId": "us-east-1:45091318-8c4e-4f04-ab4c-6250fcd2e19a",
-        "IdentityPoolName": "authenticatordf03bc0b_identitypool_df03bc0b__dev",
-        "UserPoolName": "authenticatordf03bc0b_userpool_df03bc0b",
-        "CreatedSNSRole": "arn:aws:iam::654610203253:role/snsundefined120236-dev",
-        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:654610203253:userpool/us-east-1_KihGulSEX"
-      },
-      "lastPushDirHash": "QlMEZ4L9gPKaj09tO4bpbXzJae8="
+      }
     }
   },
   "hosting": {
@@ -60,13 +59,12 @@
       "service": "amplifyhosting",
       "providerPlugin": "awscloudformation",
       "type": "manual",
+      "output": {},
+      "lastPushTimeStamp": "2021-12-11T20:00:29.862Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-authenticator-dev-120236-deployment/amplify-cfn-templates/hosting/amplifyhosting-template.json",
         "logicalId": "hostingamplifyhosting"
-      },
-      "lastPushTimeStamp": "2021-12-11T18:03:44.914Z",
-      "output": {},
-      "lastPushDirHash": "ipgWQRUzr5Z0FOXWopvQEFZO6RE="
+      }
     }
   }
 }
