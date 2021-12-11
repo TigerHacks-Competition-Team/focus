@@ -1,11 +1,12 @@
 import React from 'react';
-import '@aws-amplify/ui/dist/style.css';
 import logo from './logo.svg';
 import Amplify, {Auth} from 'aws-amplify';
 import {
 	withAuthenticator
 } from '@aws-amplify/ui-react';
 import awsconfig from './aws-exports';
+import './App.global.css';
+
 
 Amplify.configure(awsconfig);
 Auth.configure(awsconfig);
