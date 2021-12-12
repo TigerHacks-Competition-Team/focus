@@ -5,6 +5,7 @@ import {
   Coord2D,
   Coords3D,
 } from "@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh/util";
+import { getEyeAngle } from "./analyzePoints";
 
 const facePoints = {
   leftEye: [
@@ -70,12 +71,41 @@ const drawMask = (ctx, keypoints) => {
   Object.keys(facePoints).forEach((key) => {
     const points = facePoints[key];
     ctx.beginPath();
-
+    if (key == "leftIris")  {
+      ctx.strokeStyle = "transparent"
+      ctx.fillStyle = "red"
+      const {leftIris} = getEyeAngle({scaledMesh: keypoints})
+      ctx.fillRect(leftIris.x-2.5, leftIris.y-2.5, 5, 5)
+    }
+    else if (key == "rightIris") {
+      ctx.strokeStyle = "transparent"
+      ctx.fillStyle = "blue"
+      const {rightIris} = getEyeAngle({scaledMesh: keypoints})
+      ctx.fillRect(rightIris.x-2.5, rightIris.y-2.5, 5, 5)
+    }
+    else if (key == "leftEye")  {
+      ctx.strokeStyle = "transparent"
+      ctx.fillStyle = "black"
+      const {leftEye} = getEyeAngle({scaledMesh: keypoints})
+      ctx.fillRect(leftEye.x-2.5, leftEye.y-2.5, 5, 5)
+    }
+    else if (key == "rightEye") {
+      ctx.strokeStyle = "transparent"
+      ctx.fillStyle = "black"
+      const {rightEye} = getEyeAngle({scaledMesh: keypoints})
+      ctx.fillRect(rightEye.x-2.5, rightEye.y-2.5, 5, 5)
+    }
+    else ctx.strokeStyle = "black"
+    ctx.fillStyle = "black"
+    
+    if (key == "faceOval") {
     ctx.moveTo(points[0][0], points[0][1]);
     for (let i = 1; i < points.length; i++) {
+      
       ctx.lineTo(keypoints[points[i]][0], keypoints[points[i]][1]);
     }
     ctx.closePath();
+  }
     ctx.stroke();
   });
 };
