@@ -5,10 +5,16 @@ import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detec
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { draw } from "./mask";
-import { getDistance, getAngle, overallXAngle, overallYAngle, averageAngles } from "./analyzePoints";
+import {
+  getDistance,
+  getAngle,
+  overallXAngle,
+  overallYAngle,
+  averageAngles,
+} from "./analyzePoints";
 import { IconPanoramaVertical } from "@aws-amplify/ui-react";
 
-const Demo = () => {
+const Demo = (props) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [frames, setFrames] = useState(0);
@@ -22,7 +28,8 @@ const Demo = () => {
   const [xAngle, setXAngle] = useState(0);
   const [yAngle, setYAngle] = useState(0);
   const [overallAngle, setOverallAngle] = useState(0);
-  const [angleMeasures, setAngleMeasures] = useState([])
+  const [angleMeasures, setAngleMeasures] = useState([]);
+  const [focused, setFocused] = useState(true);
 
   const loop = true;
   const consoleOuput = false;
@@ -73,16 +80,19 @@ const Demo = () => {
             const { xAngle, yAngle } = getAngle(predictions);
             setXAngle(xAngle);
             setYAngle(yAngle);
-            setAngleMeasures(prev => {
-                const msrs = [...prev]
-                if (msrs.length >= 10) {
-                    msrs.splice(0, 1)
-                }
-                msrs.push({x: overallXAngle(predictions), y: overallYAngle(predictions)})
-                setOverallAngle(averageAngles(msrs));
-                return msrs
-            })
-            
+            setAngleMeasures((prev) => {
+              const msrs = [...prev];
+              if (msrs.length >= 10) {
+                msrs.splice(0, 1);
+              }
+              msrs.push({
+                x: overallXAngle(predictions),
+                y: overallYAngle(predictions),
+              });
+              setOverallAngle(averageAngles(msrs));
+              return msrs;
+            });
+            setFocused(isFocused());
           });
 
           const t1 = new Date().getTime();
@@ -103,21 +113,33 @@ const Demo = () => {
     }
   }, [videoRef, tog]);
 
+  useEffect(() => {
+    props.focusChange(focused);
+  }, [focused]);
+
+  const isFocused = () => {
+    return Math.abs(overallAngle.x) < 25;
+  };
+
   return (
     <div
-      style={{ backgroundColor: Math.abs(overallAngle.x) > 25 || Math.abs(overallAngle.y) > 25 ? "red" : "white" }}
+      style={{
+        position: "absolute",
+        background: "transparent",
+        top: 0,
+        left: 0,
+      }}
     >
-      <Webcam id="video" ref={videoRef}></Webcam>
+      <Webcam
+        id="video"
+        ref={videoRef}
+        style={{ opacity: 0, position: "absolute" }}
+      ></Webcam>
       <canvas ref={canvasRef} />
-      <p>Frames: {frames}</p>
-      <p>Distance: {dist}</p>
-      <p>X Angle: {xAngle}</p>
-      <p>Y Angle: {yAngle}</p>
-      <p>Overall Angle: {overallAngle.x} {overallAngle.y}</p>
       <div
         style={{
           position: "fixed",
-          top: ((overallAngle.y-20)/-40)*1080,
+          top: 500,
           left: ((overallAngle.x - 20) / -40) * 1920,
           height: 50,
           width: 50,

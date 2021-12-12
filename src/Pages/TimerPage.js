@@ -3,6 +3,7 @@ import colors from "../Constants/colors";
 import NavBar from "../Components/NavBar";
 import { Card, Flex, View, Heading, Button } from "@aws-amplify/ui-react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import Demo from "../Demo.js";
 
 /*const timeRotation = [
   { state: "focus", time: 1500 },
@@ -25,18 +26,121 @@ const timeRotation = [
   { state: "break", time: 9 },
 ];
 
+const calcFocusedPercent = (focusSwitchTimes) => {
+  let totalTime = 0;
+  let focusedTime = 0;
+
+  focusSwitchTimes.forEach((focusSwitch, idx) => {
+    if (idx !== 0) {
+      let switchTime = focusSwitch.time;
+
+      let prevSwitch = focusSwitchTimes[idx - 1];
+      let prevSwitchTime = prevSwitch.time;
+      let prevSwitchState = prevSwitch.focus;
+      let dt = switchTime - prevSwitchTime;
+
+      if (prevSwitchState === "focused") {
+        focusedTime += dt;
+        totalTime += dt;
+      } else if (prevSwitchState === "unfocused") {
+        totalTime += dt;
+      }
+    }
+  });
+
+  return { focusedTime, totalTime };
+};
+
 const TimerPage = () => {
   const [playing, setPlaying] = useState(false);
   const [timerIdx, setTimerIdx] = useState(0);
   const [time, setTime] = useState(timeRotation[timerIdx].time);
   const [remaining, setRemaining] = useState(timeRotation[timerIdx].time);
   const [reset, setReset] = useState(0);
+  const [focused, setFocused] = useState(true);
+  const [focusSwitchTimes, setFocusSwitchTimes] = useState([]);
+  const [started, setStarted] = useState(false);
+
   function str_pad_left(string, pad, length) {
     return (new Array(length + 1).join(pad) + string).slice(-length);
   }
+
+  useEffect(() => {
+    if (started) {
+      if (!playing) {
+        setFocusSwitchTimes((prev) => {
+          return [...prev, { time: new Date().getTime(), focus: "pause" }];
+        });
+      } else {
+        setFocusSwitchTimes((prev) => {
+          return [
+            ...prev,
+            {
+              time: new Date().getTime(),
+              focus: focused ? "focused" : "unfocused",
+            },
+          ];
+        });
+      }
+    }
+  }, [playing]);
+
+  useEffect(() => {
+    if (started) {
+      if (timeRotation[timerIdx].state === "break") {
+        setFocusSwitchTimes((prev) => {
+          return [...prev, { time: new Date().getTime(), focus: "break" }];
+        });
+      } else {
+        setFocusSwitchTimes((prev) => {
+          return [
+            ...prev,
+            {
+              time: new Date().getTime(),
+              focus: focused ? "focused" : "unfocused",
+            },
+          ];
+        });
+      }
+    }
+  }, [timerIdx]);
+
+  const displayFocusTime = () => {
+    let { focusedTime, totalTime } = calcFocusedPercent([
+      ...focusSwitchTimes,
+      { time: new Date().getTime(), focus: "end" },
+    ]);
+    let percent = (focusedTime / totalTime) * 100;
+    window.alert(focusedTime);
+    window.alert(totalTime);
+    window.alert(percent);
+    window.alert(JSON.stringify(focusSwitchTimes));
+  };
+
   return (
-    <View style={styles.parent}>
+    <View
+      style={{
+        ...styles.parent,
+        backgroundColor: focused ? "#7389AE" : "#FF6961",
+      }}
+    >
       <NavBar />
+      <Demo
+        focusChange={(focused) => {
+          setFocused(focused);
+          if (playing && timeRotation[timerIdx].state === "focus") {
+            setFocusSwitchTimes((prev) => {
+              return [
+                ...prev,
+                {
+                  time: new Date().getTime(),
+                  focus: focused ? "focused" : "unfocused",
+                },
+              ];
+            });
+          }
+        }}
+      />
       <div
         style={{
           display: "flex",
@@ -129,10 +233,37 @@ const TimerPage = () => {
           >
             <Button
               style={styles.button}
-              onClick={() => setPlaying((prev) => !prev)}
+              onClick={() => {
+                if (!started) {
+                  setFocusSwitchTimes([]);
+                }
+                setStarted(true);
+                setPlaying((prev) => !prev);
+              }}
             >
               {playing ? "Pause" : "Start"}
             </Button>
+            {started && (
+              <Button
+                style={styles.button}
+                onClick={() => {
+                  setTimerIdx(0);
+                  setStarted(false);
+                  setPlaying(false);
+                  setReset((prev) => prev + 1);
+                  setRemaining(0);
+                  setFocusSwitchTimes((prev) => {
+                    return [
+                      ...prev,
+                      { time: new Date().getTime(), focus: "reset" },
+                    ];
+                  });
+                  displayFocusTime();
+                }}
+              >
+                End
+              </Button>
+            )}
             {!playing && remaining < time && (
               <Button
                 style={styles.button}
@@ -193,7 +324,6 @@ const styles = {
     padding: "0px",
     width: "100%",
     minHeight: "100vh",
-    background: "#7389AE",
   },
   main: {
     margin: "24px 0px",
