@@ -14,6 +14,7 @@
     "@testing-library/user-event": "^7.1.2",
     "aws-amplify": "^4.3.10",
     "react": "^16.13.1",
+    "react-countdown-circle-timer": "^2.5.4",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "react-webcam": "^6.0.0"
