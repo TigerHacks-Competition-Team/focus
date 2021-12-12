@@ -51,13 +51,25 @@ export const getDistance = (prediction) => {
 export const overallXAngle = (prediction) => {
   const { xAngle, yAngle } = getAngle(prediction);
   const coords = getEyeAngle(prediction[0]);
-  const xEyeAngle = coords.leftIris.angleX;
-  const eyeScalar = 2;
+  const xEyeAngle = (coords.leftIris.angleX+coords.rightIris.angleX)/2;
+  const eyeScalar = 5;
 
   console.log("xFaceAngle: " + xAngle);
   console.log("xEyeAngle: " + xEyeAngle);
 
-  return xAngle + eyeScalar * xEyeAngle;
+  return xAngle/2 + eyeScalar * xEyeAngle;
+};
+
+export const overallYAngle = (prediction) => {
+  const { xAngle, yAngle } = getAngle(prediction);
+  const coords = getEyeAngle(prediction[0]);
+  const yEyeAngle = (coords.leftIris.angleY+coords.rightIris.angleY)/2+3;
+  const eyeScalar = 5;
+
+  console.log("xFaceAngle: " + yAngle);
+  console.log("xEyeAngle: " + yEyeAngle);
+
+  return yAngle + eyeScalar * yEyeAngle;
 };
 
 export const getAngle = (prediction) => {
@@ -164,12 +176,23 @@ export const getEyeAngle = (prediction) => {
   const leftAngleX =
     ((coords.leftIris.x - coords.leftEye.x) / (coords.leftEye.width / 2)) *
     hFOV;
-  console.log(coords.leftIris.x - coords.leftEye.x);
   //const leftAngleX = coords.leftIris.x-coords.leftEye.x
   const leftAngleY =
     ((coords.leftIris.y - coords.leftEye.y) / (coords.leftEye.height / 2)) *
     vFOV;
   coords.leftIris.angleX = leftAngleX;
   coords.leftIris.angleY = leftAngleY;
+
+  // right iris angle
+  const rightAngleX =
+    ((coords.rightIris.x - coords.rightEye.x) / (coords.rightEye.width / 2)) *
+    hFOV;
+  //const rightAngleX = coords.rightIris.x-coords.rightEye.x
+  const rightAngleY =
+    ((coords.rightIris.y - coords.rightEye.y) / (coords.rightEye.height / 2)) *
+    vFOV;
+  coords.rightIris.angleX = rightAngleX;
+  coords.rightIris.angleY = rightAngleY;
+
   return coords;
 };

@@ -5,7 +5,7 @@ import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detec
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { draw } from "./mask";
-import { getDistance, getAngle, overallXAngle } from "./analyzePoints";
+import { getDistance, getAngle, overallXAngle, overallYAngle } from "./analyzePoints";
 
 const Demo = () => {
   const videoRef = useRef(null);
@@ -71,7 +71,7 @@ const Demo = () => {
             const { xAngle, yAngle } = getAngle(predictions);
             setXAngle(xAngle);
             setYAngle(yAngle);
-            setOverallAngle(overallXAngle(predictions));
+            setOverallAngle({x: overallXAngle(predictions), y: overallYAngle(predictions)});
           });
 
           const t1 = new Date().getTime();
@@ -94,7 +94,7 @@ const Demo = () => {
 
   return (
     <div
-      style={{ backgroundColor: Math.abs(overallAngle) > 25 ? "red" : "white" }}
+      style={{ backgroundColor: Math.abs(overallAngle.x) > 25 || Math.abs(overallAngle.y) > 25 ? "red" : "white" }}
     >
       <Webcam id="video" ref={videoRef}></Webcam>
       <canvas ref={canvasRef} />
@@ -102,7 +102,17 @@ const Demo = () => {
       <p>Distance: {dist}</p>
       <p>X Angle: {xAngle}</p>
       <p>Y Angle: {yAngle}</p>
-      <p>Overall Angle: {overallAngle}</p>
+      <p>Overall Angle: {overallAngle.x} {overallAngle.y}</p>
+      <div
+        style={{
+          position: "fixed",
+          top: ((overallAngle.y-20)/-40)*1080,
+          left: ((overallAngle.x - 20) / -40) * 1920,
+          height: 50,
+          width: 50,
+          backgroundColor: "blue",
+        }}
+      />
     </div>
   );
 };
