@@ -5,6 +5,7 @@ import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detec
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { draw } from "./mask";
+import { getDistance, getAngle } from "./analyzePoints";
 
 const Demo = () => {
   const videoRef = useRef(null);
@@ -16,8 +17,11 @@ const Demo = () => {
   const [loaded, setLoaded] = useState(false);
   const [model, setModel] = useState(null);
 
+  const [dist, setDist] = useState(0);
+  const [angle, setAngle] = useState(0);
+
   const loop = true;
-  const consoleOuput = true;
+  const consoleOuput = false;
 
   const runPredict = async () => {
     if (consoleOuput) {
@@ -61,6 +65,8 @@ const Demo = () => {
               console.log("drawing");
             }
             draw(predictions, ctx, videoWidth, videoHeight);
+            setDist(getDistance(predictions));
+            setAngle(getAngle(predictions));
           });
 
           const t1 = new Date().getTime();
@@ -85,7 +91,9 @@ const Demo = () => {
     <div>
       <Webcam id="video" ref={videoRef}></Webcam>
       <canvas ref={canvasRef} />
-      <p>{frames}</p>
+      <p>Frames: {frames}</p>
+      <p>Distance: {dist}</p>
+      <p>Angle: {angle}</p>
     </div>
   );
 };
