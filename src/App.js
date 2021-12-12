@@ -16,7 +16,7 @@ const App = ({ signOut, user }) => {
         <Route exact path="/">
           <HomePage />
         </Route>
-        <Route path="/demo">
+        <Route path="/timer">
           <TimerPage />
         </Route>
       </Switch>

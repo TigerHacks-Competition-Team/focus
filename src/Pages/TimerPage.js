@@ -65,7 +65,7 @@ const TimerPage = () => {
   const [started, setStarted] = useState(false);
   const [focusedTime, setFocusedTime] = useState([]);
 
-  const [play] = useSound(alarm);
+  const [play, { stop }] = useSound(alarm);
 
   function str_pad_left(string, pad, length) {
     return (new Array(length + 1).join(pad) + string).slice(-length);
@@ -116,6 +116,7 @@ const TimerPage = () => {
       timeRotation[timerIdx].state.charAt(0).toUpperCase() +
       timeRotation[timerIdx].state.slice(1)
     } ${Math.floor(remaining / 60)}:${str_pad_left(remaining % 60, "0", 2)}`;
+    if (remaining <= time - 3) stop();
   }, [remaining]);
 
   const displayFocusTime = () => {
@@ -126,8 +127,11 @@ const TimerPage = () => {
     let percentFocused = Math.floor((ft.focusedTime / ft.totalTime) * 100);
     let precentUnfocused = 100 - percentFocused;
     setFocusedTime([
-      { name: `Focused ${percentFocused}%`, val: percentFocused },
-      { name: `Unfocused ${precentUnfocused}%`, val: precentUnfocused },
+      {
+        name: `Session ${percentFocused}%`,
+        focused: percentFocused,
+        unfocused: precentUnfocused,
+      },
     ]);
   };
 
@@ -195,9 +199,10 @@ const TimerPage = () => {
               <BarChart width={730} height={250} data={focusedTime}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
-                <YAxis />
+                <YAxis min={0} max={100} />
                 <Tooltip />
-                <Bar dataKey="val" fill="#8884d8" />
+                <Bar dataKey="focused" fill="#7389AE" />
+                <Bar dataKey="unfocused" fill="#FF6961" />
               </BarChart>
             </div>
           ) : (

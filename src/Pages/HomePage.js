@@ -34,7 +34,7 @@ const HomePage = () => {
           <Button
             style={styles.button}
             onClick={() => {
-              window.location.href = "/demo";
+              window.location.href = "/timer";
             }}
           >
             Try it now
