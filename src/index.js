@@ -4,11 +4,12 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import HomePage from './Pages/HomePage';
+import TimerPage from './Pages/TimerPage';
 
 
 ReactDOM.render(
   <React.StrictMode>
-    <HomePage />
+    <TimerPage />
   </React.StrictMode>,
   document.getElementById('root')
 );
