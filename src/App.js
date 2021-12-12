@@ -7,15 +7,21 @@ import awsconfig from "./aws-exports";
 import HomePage from "./Pages/HomePage";
 import TimerPage from "./Pages/TimerPage";
 
-Amplify.configure(awsconfig);
-Auth.configure(awsconfig);
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 const App = ({ signOut, user }) => {
   return (
-    <div className="App">
-      <TimerPage />
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <HomePage />
+        </Route>
+        <Route path="/demo">
+          <TimerPage />
+        </Route>
+      </Switch>
+    </Router>
   );
 };
 
-export default withAuthenticator(App);
+export default App;

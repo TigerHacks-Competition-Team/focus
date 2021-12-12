@@ -31,7 +31,14 @@ const HomePage = () => {
           Focus Better.
         </Heading>
         <View>
-          <Button style={styles.button}>Try it now</Button>
+          <Button
+            style={styles.button}
+            onClick={() => {
+              window.location.href = "/demo";
+            }}
+          >
+            Try it now
+          </Button>
         </View>
       </div>
       <Flex style={styles.main} direction="row">
@@ -41,8 +48,11 @@ const HomePage = () => {
             <p style={styles.text}>
               With so much school work being computerized today, it is easy to
               get distracted and very difficult to get work done. Our site helps
-              users stay focused, by automatically giving timed breaks and
-              rewarding sticking to the schedule. Try it out!
+              users stay focused by automatically giving timed breaks and
+              tracking how focused the user is.{" "}
+              <a href="/demo" style={{ color: "#304050" }}>
+                Try it out!
+              </a>
             </p>
           </View>
         </Card>
@@ -51,9 +61,10 @@ const HomePage = () => {
           <View style={styles.cardContent}>
             <h2 style={styles.header}>How it Works</h2>
             <p style={styles.text}>
-              The site used WebGazer.JS to detect where the user is looking,
-              then analyzes this data to rate the focus of the user over time
-              and determine if they’re staying on task.
+              The site used FaceMesh to track 465 facial features from the
+              user's webcame. Using custom algorithms, the site uses this data
+              to predict where the user is looking and determine whether they
+              are focused on the screen.
             </p>
           </View>
         </Card>
@@ -63,11 +74,10 @@ const HomePage = () => {
           <View style={styles.cardContent}>
             <h2 style={styles.header}>Taking Breaks</h2>
             <p style={styles.text}>
-              Research (todo) has shown that the best way to keep students
-              focused on a task is to give them timed breaks, with a game on the
-              site helping them to relax during the breaks. Our site will
-              automatically choose an optimal timing, or the user can manually
-              override it.
+              Research has shown that one of the best way to keep students
+              focused on a task is to give them timed breaks. Our site
+              automatically times out focus and break sessions, and includes a
+              game for the users to play during breaks.
             </p>
           </View>
         </Card>
@@ -76,9 +86,9 @@ const HomePage = () => {
           <View style={styles.cardContent}>
             <h2 style={styles.header}>Track your Progress</h2>
             <p style={styles.text}>
-              The site automatically tracks your focus over time, and charts it
-              so you can see when you’ve got on task and how it’s changed since
-              the start of a session.
+              After a session is completed, the user can view how focused they
+              were throughout the sessions. This data is shows is summarized in
+              a chart that lets the user see how they are doing at a glance.
             </p>
           </View>
         </Card>
@@ -86,12 +96,12 @@ const HomePage = () => {
       <Flex style={styles.main} direction="row">
         <Card style={styles.cardMain}>
           <View style={styles.cardContent}>
-            <h2 style={styles.header}>Leaderboard</h2>
+            <h2 style={styles.header}>Demo</h2>
             <p style={styles.text}>
-              Why would you want to use the app anyways? To get a high score!
-              Compete to get the best score on the leaderboard by getting a high
-              ‘focus score’ and focusing for longer sessions then see how you
-              place on the leaderboard.
+              For our demo, you can see a live sketch of your face, and the
+              vectors we find to estimate where you are looking. We also
+              decreased the timer by a large factor so you can see how the site
+              works without having to wait.
             </p>
           </View>
         </Card>
@@ -100,11 +110,10 @@ const HomePage = () => {
           <View style={styles.cardContent}>
             <h2 style={styles.header}>Why?</h2>
             <p style={styles.text}>
-              Although this app is useful for any student who wants to study, it
-              can be particularly useful for students with ADD, ADHD, or other
-              attention disorders. The timed focus method is also a reccomended
-              strategy for these students, so we hope this app will be effective
-              for them.
+              We hope this site can be particularly useful for students with
+              ADD, ADHD, or other attention disorders. The timed focus method is
+              also reccomended strategy for these students, so we hope this app
+              can be and effective study tool for them.
             </p>
           </View>
         </Card>
@@ -151,7 +160,7 @@ const styles = {
     "flex-direction": "column",
     "justify-content": "center",
     "align-items": "center",
-    padding: "160px 40px 40px",
+    padding: "100px 40px 40px",
 
     position: "static",
     "min-height": "112px",
