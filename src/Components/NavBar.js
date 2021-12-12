@@ -5,10 +5,11 @@ import { IconHourglassDisabled, Heading, Button } from "@aws-amplify/ui-react";
 const NavBar = () => {
   return (
     <div style={styles.div}>
-      <Button style={styles.buttonBox} onClick={() => window.location.href='/'}>
-        <span class="material-icons">
-          hourglass_disabled
-        </span>
+      <Button
+        style={styles.buttonBox}
+        onClick={() => (window.location.href = "/")}
+      >
+        <span class="material-icons">hourglass_disabled</span>
         <Heading level={2} style={styles.text}>
           Focus
         </Heading>
@@ -19,11 +20,12 @@ const NavBar = () => {
 
 const styles = {
   text: {
-    "fontStyle": "normal",
-    "fontWeight": "600",
-    "fontSize": "20px",
-    "lineHeight": "24px",
-    "textTransform": "capitalize",
+    "font-family": "Inter",
+    fontStyle: "normal",
+    fontWeight: "600",
+    fontSize: "18px",
+    lineHeight: "24px",
+    textTransform: "capitalize",
     padding: 0,
     margin: 0,
     marginLeft: "6px",
@@ -39,7 +41,6 @@ const styles = {
     top: "0px",
     backgroundColor: "#FFffff",
     boxShadow: "0px 1px 4px rgba(0, 0, 0, 0.5)",
-
   },
   buttonBox: {
     display: "flex",
@@ -50,7 +51,7 @@ const styles = {
     backgroundColor: "#ffffff",
     outline: "none",
     border: "none",
-    textDecoration: "none"
+    textDecoration: "none",
   },
 };
 
