@@ -9,7 +9,7 @@ import TimerPage from "./Pages/TimerPage";
 
 ReactDOM.render(
   <React.StrictMode>
-    <TimerPage />
+    <App />
   </React.StrictMode>,
   document.getElementById("root")
 );
