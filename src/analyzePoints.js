@@ -48,6 +48,16 @@ export const getDistance = (prediction) => {
   );
 };
 
+export const averageAngles = (measures) => {
+  var x = 0
+  var y = 0
+  measures.forEach((msr) => {
+    x += msr.x
+    y += msr.y
+  })
+  return {x: x/measures.length, y: y/measures.length}
+}
+
 export const overallXAngle = (prediction) => {
   const { xAngle, yAngle } = getAngle(prediction);
   const coords = getEyeAngle(prediction[0]);

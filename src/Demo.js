@@ -5,7 +5,8 @@ import * as faceLandmarksDetection from "@tensorflow-models/face-landmarks-detec
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { draw } from "./mask";
-import { getDistance, getAngle, overallXAngle, overallYAngle } from "./analyzePoints";
+import { getDistance, getAngle, overallXAngle, overallYAngle, averageAngles } from "./analyzePoints";
+import { IconPanoramaVertical } from "@aws-amplify/ui-react";
 
 const Demo = () => {
   const videoRef = useRef(null);
@@ -21,6 +22,7 @@ const Demo = () => {
   const [xAngle, setXAngle] = useState(0);
   const [yAngle, setYAngle] = useState(0);
   const [overallAngle, setOverallAngle] = useState(0);
+  const [angleMeasures, setAngleMeasures] = useState([])
 
   const loop = true;
   const consoleOuput = false;
@@ -71,7 +73,16 @@ const Demo = () => {
             const { xAngle, yAngle } = getAngle(predictions);
             setXAngle(xAngle);
             setYAngle(yAngle);
-            setOverallAngle({x: overallXAngle(predictions), y: overallYAngle(predictions)});
+            setAngleMeasures(prev => {
+                const msrs = [...prev]
+                if (msrs.length >= 10) {
+                    msrs.splice(0, 1)
+                }
+                msrs.push({x: overallXAngle(predictions), y: overallYAngle(predictions)})
+                setOverallAngle(averageAngles(msrs));
+                return msrs
+            })
+            
           });
 
           const t1 = new Date().getTime();
