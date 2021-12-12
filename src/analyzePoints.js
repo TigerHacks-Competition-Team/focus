@@ -48,6 +48,18 @@ export const getDistance = (prediction) => {
   );
 };
 
+export const overallXAngle = (prediction) => {
+  const { xAngle, yAngle } = getAngle(prediction);
+  const coords = getEyeAngle(prediction[0]);
+  const xEyeAngle = coords.leftIris.angleX;
+  const eyeScalar = 2;
+
+  console.log("xFaceAngle: " + xAngle);
+  console.log("xEyeAngle: " + xEyeAngle);
+
+  return xAngle + eyeScalar * xEyeAngle;
+};
+
 export const getAngle = (prediction) => {
   const keypoints = prediction[0].scaledMesh;
 
