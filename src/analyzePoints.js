@@ -73,7 +73,9 @@ export const overallXAngle = (prediction) => {
 export const overallYAngle = (prediction) => {
   const { xAngle, yAngle } = getAngle(prediction);
   const coords = getEyeAngle(prediction[0]);
-  const yEyeAngle = (coords.leftIris.angleY+coords.rightIris.angleY)/2+3;
+  const width = (coords.leftEye.width+coords.rightEye.width)/2
+  const height = (coords.leftEye.height+coords.rightEye.height)/2
+  const yEyeAngle = ((coords.leftIris.angleY+coords.rightIris.angleY)/2)/(height/width)+3;
   const eyeScalar = 5;
 
   console.log("xFaceAngle: " + yAngle);
