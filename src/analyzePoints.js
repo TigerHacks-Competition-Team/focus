@@ -7,6 +7,8 @@ const eyeCorners = {
 
 const lipChinLeft = 365;
 const lipChinRight = 150;
+const faceTop = 10;
+const faceBottom = 152;
 
 const dist = (p1, p2) => {
   return Math.sqrt(Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2));
@@ -49,7 +51,16 @@ export const getDistance = (prediction) => {
 export const getAngle = (prediction) => {
   const keypoints = prediction[0].scaledMesh;
 
-  return keypoints[eyeCorners.leftEar][2] - keypoints[eyeCorners.rightEar][2];
+  const est1 =
+    keypoints[eyeCorners.leftEar][2] - keypoints[eyeCorners.rightEar][2];
+  const est2 =
+    keypoints[eyeCorners.leftNose][2] - keypoints[eyeCorners.rightNose][2];
+  const est3 = keypoints[lipChinLeft][2] - keypoints[lipChinRight][2];
+
+  const xAngle = (2 * (est1 + est2 + est3)) / 3;
+  const yAngle = keypoints[faceTop][2] - keypoints[faceBottom][2] + 30;
+
+  return { xAngle, yAngle };
 };
 
 const irises = {
@@ -63,70 +74,90 @@ const irises = {
     263, 249, 390, 373, 374, 380, 381, 382, 263, 466, 388, 387, 386, 385, 384,
     398, 263,
   ],
-}
+};
 
 export const getEyeAngle = (prediction) => {
-  const keypoints = prediction.scaledMesh
-  const hFOV = 35
-  const vFOV = 35
+  const keypoints = prediction.scaledMesh;
+  const hFOV = 35;
+  const vFOV = 35;
 
-  var leftIrisX = 0
-  var leftIrisY = 0
-  var leftIrisZ = 0
+  var leftIrisX = 0;
+  var leftIrisY = 0;
+  var leftIrisZ = 0;
   irises.leftIris.forEach((pt) => {
-    leftIrisX += keypoints[pt][0]
-    leftIrisY += keypoints[pt][1]
-    leftIrisZ += keypoints[pt][2]
-  })
+    leftIrisX += keypoints[pt][0];
+    leftIrisY += keypoints[pt][1];
+    leftIrisZ += keypoints[pt][2];
+  });
 
-  var rightIrisX = 0
-  var rightIrisY = 0
-  var rightIrisZ = 0
+  var rightIrisX = 0;
+  var rightIrisY = 0;
+  var rightIrisZ = 0;
   irises.rightIris.forEach((pt) => {
-    rightIrisX += keypoints[pt][0]
-    rightIrisY += keypoints[pt][1]
-    rightIrisZ += keypoints[pt][2]
-  })
+    rightIrisX += keypoints[pt][0];
+    rightIrisY += keypoints[pt][1];
+    rightIrisZ += keypoints[pt][2];
+  });
 
-  var leftEyeMax = 0
-  var leftEyeMin = 1000
+  var leftEyeMax = 0;
+  var leftEyeMin = 1000;
   irises.leftEye.forEach((pt) => {
-    if (keypoints[pt][1] > leftEyeMax) leftEyeMax = keypoints[pt][1]
-    if (keypoints[pt][1] < leftEyeMin) leftEyeMin = keypoints[pt][1]
-  })
+    if (keypoints[pt][1] > leftEyeMax) leftEyeMax = keypoints[pt][1];
+    if (keypoints[pt][1] < leftEyeMin) leftEyeMin = keypoints[pt][1];
+  });
 
   var leftEye = {
-    x: (keypoints[eyeCorners.leftEar][0]+keypoints[eyeCorners.leftNose][0])/2,
-    y: leftEyeMin+(leftEyeMax-leftEyeMin)/2,
-    z: (keypoints[eyeCorners.leftEar][2]+keypoints[eyeCorners.leftNose][2])/2,
-    width: Math.abs(keypoints[eyeCorners.leftEar][0]-keypoints[eyeCorners.leftNose][0]),
-    height: leftEyeMax-leftEyeMin
-  }
+    x:
+      (keypoints[eyeCorners.leftEar][0] + keypoints[eyeCorners.leftNose][0]) /
+      2,
+    y: leftEyeMin + (leftEyeMax - leftEyeMin) / 2,
+    z:
+      (keypoints[eyeCorners.leftEar][2] + keypoints[eyeCorners.leftNose][2]) /
+      2,
+    width: Math.abs(
+      keypoints[eyeCorners.leftEar][0] - keypoints[eyeCorners.leftNose][0]
+    ),
+    height: leftEyeMax - leftEyeMin,
+  };
 
-  var rightEyeMax = 0
-  var rightEyeMin = 1000
+  var rightEyeMax = 0;
+  var rightEyeMin = 1000;
   irises.rightEye.forEach((pt) => {
-    if (keypoints[pt][1] > rightEyeMax) rightEyeMax = keypoints[pt][1]
-    if (keypoints[pt][1] < rightEyeMin) rightEyeMin = keypoints[pt][1]
-  })
+    if (keypoints[pt][1] > rightEyeMax) rightEyeMax = keypoints[pt][1];
+    if (keypoints[pt][1] < rightEyeMin) rightEyeMin = keypoints[pt][1];
+  });
 
   var rightEye = {
-    x: (keypoints[eyeCorners.rightEar][0]+keypoints[eyeCorners.rightNose][0])/2,
-    y: rightEyeMin+(rightEyeMax-rightEyeMin)/2,
-    z: (keypoints[eyeCorners.rightEar][2]+keypoints[eyeCorners.rightNose][2])/2,
-    width: Math.abs(keypoints[eyeCorners.rightEar][0]-keypoints[eyeCorners.rightNose][0]),
-    height: rightEyeMax-rightEyeMin
-  }
-  
+    x:
+      (keypoints[eyeCorners.rightEar][0] + keypoints[eyeCorners.rightNose][0]) /
+      2,
+    y: rightEyeMin + (rightEyeMax - rightEyeMin) / 2,
+    z:
+      (keypoints[eyeCorners.rightEar][2] + keypoints[eyeCorners.rightNose][2]) /
+      2,
+    width: Math.abs(
+      keypoints[eyeCorners.rightEar][0] - keypoints[eyeCorners.rightNose][0]
+    ),
+    height: rightEyeMax - rightEyeMin,
+  };
 
-  const coords = {leftIris: {x: leftIrisX/4, y: leftIrisY/4, z: leftIrisZ/4}, rightIris: {x: rightIrisX/4, y: rightIrisY/4, z: rightIrisZ/4}, leftEye, rightEye}
+  const coords = {
+    leftIris: { x: leftIrisX / 4, y: leftIrisY / 4, z: leftIrisZ / 4 },
+    rightIris: { x: rightIrisX / 4, y: rightIrisY / 4, z: rightIrisZ / 4 },
+    leftEye,
+    rightEye,
+  };
 
   // left iris angle
-  const leftAngleX = ((coords.leftIris.x-coords.leftEye.x)/(coords.leftEye.width/2))*hFOV
-  console.log((coords.leftIris.x-coords.leftEye.x))
+  const leftAngleX =
+    ((coords.leftIris.x - coords.leftEye.x) / (coords.leftEye.width / 2)) *
+    hFOV;
+  console.log(coords.leftIris.x - coords.leftEye.x);
   //const leftAngleX = coords.leftIris.x-coords.leftEye.x
-  const leftAngleY = ((coords.leftIris.y-coords.leftEye.y)/(coords.leftEye.height/2))*vFOV
-  coords.leftIris.angleX = leftAngleX
-  coords.leftIris.angleY = leftAngleY
-  return coords
-}
+  const leftAngleY =
+    ((coords.leftIris.y - coords.leftEye.y) / (coords.leftEye.height / 2)) *
+    vFOV;
+  coords.leftIris.angleX = leftAngleX;
+  coords.leftIris.angleY = leftAngleY;
+  return coords;
+};

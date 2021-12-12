@@ -18,7 +18,8 @@ const Demo = () => {
   const [model, setModel] = useState(null);
 
   const [dist, setDist] = useState(0);
-  const [angle, setAngle] = useState(0);
+  const [xAngle, setXAngle] = useState(0);
+  const [yAngle, setYAngle] = useState(0);
 
   const loop = true;
   const consoleOuput = false;
@@ -66,7 +67,9 @@ const Demo = () => {
             }
             draw(predictions, ctx, videoWidth, videoHeight);
             setDist(getDistance(predictions));
-            setAngle(getAngle(predictions));
+            const { xAngle, yAngle } = getAngle(predictions);
+            setXAngle(xAngle);
+            setYAngle(yAngle);
           });
 
           const t1 = new Date().getTime();
@@ -93,7 +96,8 @@ const Demo = () => {
       <canvas ref={canvasRef} />
       <p>Frames: {frames}</p>
       <p>Distance: {dist}</p>
-      <p>Angle: {angle}</p>
+      <p>X Angle: {xAngle}</p>
+      <p>Y Angle: {yAngle}</p>
     </div>
   );
 };

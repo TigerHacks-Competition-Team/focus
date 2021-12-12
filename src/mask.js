@@ -5,7 +5,7 @@ import {
   Coord2D,
   Coords3D,
 } from "@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh/util";
-import { getEyeAngle } from "./analyzePoints";
+import { getEyeAngle, getAngle } from "./analyzePoints";
 
 const facePoints = {
   leftEye: [
@@ -71,72 +71,100 @@ const drawMask = (ctx, keypoints) => {
   Object.keys(facePoints).forEach((key) => {
     const points = facePoints[key];
     ctx.beginPath();
-    if (key == "leftIris")  {
-      ctx.strokeStyle = "transparent"
-      ctx.fillStyle = "red"
-      const {leftIris, leftEye} = getEyeAngle({scaledMesh: keypoints})
-      console.log(`irisX: ${leftIris.angleX}`)
-      ctx.fillRect(leftIris.x-2.5, leftIris.y-2.5, 5, 5)
-    }
-    else if (key == "rightIris") {
-      ctx.strokeStyle = "transparent"
-      ctx.fillStyle = "blue"
-      const {rightIris} = getEyeAngle({scaledMesh: keypoints})
-      ctx.fillRect(rightIris.x-2.5, rightIris.y-2.5, 5, 5)
-    }
-    else if (key == "leftEye")  {
-      ctx.strokeStyle = "black"
-      ctx.fillStyle = "black"
-      const {leftEye, leftIris} = getEyeAngle({scaledMesh: keypoints})
-      ctx.fillRect(leftEye.x-2.5, leftEye.y-2.5, 5, 5)
-      console.log(leftEye.x)
-      ctx.strokeRect(leftEye.x-leftEye.width/2, leftEye.y-leftEye.height/2, leftEye.width, leftEye.height)
-      ctx.strokeStyle = "transparent"
-    }
-    else if (key == "rightEye") {
-      ctx.strokeStyle = "black"
-      ctx.fillStyle = "black"
-      const {rightEye, rightIris} = getEyeAngle({scaledMesh: keypoints})
-      ctx.fillRect(rightEye.x-2.5, rightEye.y-2.5, 5, 5)
-      ctx.strokeRect(rightEye.x-rightEye.width/2, rightEye.y-rightEye.height/2, rightEye.width, rightEye.height)
-      ctx.strokeStyle = "transparent"
-    }
-    else if (key == "faceOval") {
-      const {rightEye, rightIris, leftEye, leftIris} = getEyeAngle({scaledMesh: keypoints})
-      ctx.fillRect(rightEye.x-2.5, rightEye.y-2.5, 5, 5)
-      ctx.strokeRect(rightEye.x-rightEye.width/2, rightEye.y-rightEye.height/2, rightEye.width, rightEye.height)
-      ctx.strokeStyle = "purple"
-      const newPointRight = {}
-      newPointRight.x = (rightIris.x-rightEye.x)*10
-      newPointRight.y = (rightIris.y-rightEye.y)*10
-      const newPointLeft = {}
-      newPointLeft.x = (leftIris.x-leftEye.x)*10
-      newPointLeft.y = (leftIris.y-leftEye.y)*10
+    if (key == "leftIris") {
+      ctx.strokeStyle = "transparent";
+      ctx.fillStyle = "red";
+      const { leftIris, leftEye } = getEyeAngle({ scaledMesh: keypoints });
+      console.log(`irisX: ${leftIris.angleX}`);
+      ctx.fillRect(leftIris.x - 2.5, leftIris.y - 2.5, 5, 5);
+    } else if (key == "rightIris") {
+      ctx.strokeStyle = "transparent";
+      ctx.fillStyle = "blue";
+      const { rightIris } = getEyeAngle({ scaledMesh: keypoints });
+      ctx.fillRect(rightIris.x - 2.5, rightIris.y - 2.5, 5, 5);
+    } else if (key == "leftEye") {
+      ctx.strokeStyle = "black";
+      ctx.fillStyle = "black";
+      const { leftEye, leftIris } = getEyeAngle({ scaledMesh: keypoints });
+      ctx.fillRect(leftEye.x - 2.5, leftEye.y - 2.5, 5, 5);
+      console.log(leftEye.x);
+      ctx.strokeRect(
+        leftEye.x - leftEye.width / 2,
+        leftEye.y - leftEye.height / 2,
+        leftEye.width,
+        leftEye.height
+      );
+      ctx.strokeStyle = "transparent";
+    } else if (key == "rightEye") {
+      ctx.strokeStyle = "black";
+      ctx.fillStyle = "black";
+      const { rightEye, rightIris } = getEyeAngle({ scaledMesh: keypoints });
+      ctx.fillRect(rightEye.x - 2.5, rightEye.y - 2.5, 5, 5);
+      ctx.strokeRect(
+        rightEye.x - rightEye.width / 2,
+        rightEye.y - rightEye.height / 2,
+        rightEye.width,
+        rightEye.height
+      );
+      ctx.strokeStyle = "transparent";
+    } else if (key == "faceOval") {
+      const { rightEye, rightIris, leftEye, leftIris } = getEyeAngle({
+        scaledMesh: keypoints,
+      });
+      ctx.fillRect(rightEye.x - 2.5, rightEye.y - 2.5, 5, 5);
+      ctx.strokeRect(
+        rightEye.x - rightEye.width / 2,
+        rightEye.y - rightEye.height / 2,
+        rightEye.width,
+        rightEye.height
+      );
+      ctx.strokeStyle = "purple";
+      const newPointRight = {};
+      newPointRight.x = (rightIris.x - rightEye.x) * 10;
+      newPointRight.y = (rightIris.y - rightEye.y) * 10;
+      const newPointLeft = {};
+      newPointLeft.x = (leftIris.x - leftEye.x) * 10;
+      newPointLeft.y = (leftIris.y - leftEye.y) * 10;
       const newPoint = {
-        x1: (rightEye.x+leftEye.x)/2,
-        y1: (rightEye.y+leftEye.y)/2,
-      }
-      newPoint.x2 = newPoint.x1+(newPointRight.x+newPointLeft.x)/2
-      newPoint.y2 = newPoint.y1+(newPointRight.y+newPointLeft.y)/2
-      ctx.beginPath()
-      ctx.moveTo(newPoint.x1, newPoint.y1)
-      ctx.lineTo(newPoint.x2, newPoint.y2)
-      ctx.closePath()
-      ctx.stroke(); 
-    }
-    else ctx.strokeStyle = "black"
-    ctx.closePath()
-    ctx.stroke()
-    ctx.fillStyle = "black"
-    ctx.beginPath()
-    if (key == "faceOval" || true) {
-    ctx.moveTo(points[0][0], points[0][1]);
-    for (let i = 1; i < points.length; i++) {
-      
-      ctx.lineTo(keypoints[points[i]][0], keypoints[points[i]][1]);
-    }
+        x1: (rightEye.x + leftEye.x) / 2,
+        y1: (rightEye.y + leftEye.y) / 2,
+      };
+      newPoint.x2 = newPoint.x1 + (newPointRight.x + newPointLeft.x) / 2;
+      newPoint.y2 = newPoint.y1 + (newPointRight.y + newPointLeft.y) / 2;
+
+      ctx.beginPath();
+      ctx.moveTo(newPoint.x1, newPoint.y1);
+      ctx.lineTo(newPoint.x2, newPoint.y2);
+      ctx.closePath();
+      ctx.stroke();
+
+      const newPoint2 = {
+        x1: (rightEye.x + leftEye.x) / 2,
+        y1: (rightEye.y + leftEye.y) / 2 - (rightEye.x - leftEye.x) / 2,
+      };
+
+      ctx.strokeStyle = "green";
+      const { xAngle, yAngle } = getAngle([{ scaledMesh: keypoints }]);
+
+      newPoint2.x2 = newPoint2.x1 + xAngle;
+      newPoint2.y2 = newPoint2.y1 - yAngle;
+      ctx.beginPath();
+      ctx.moveTo(newPoint2.x1, newPoint2.y1);
+      ctx.lineTo(newPoint2.x2, newPoint2.y2);
+      ctx.closePath();
+      ctx.stroke();
+    } else ctx.strokeStyle = "black";
     ctx.closePath();
-  }
+    ctx.stroke();
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    if (key == "faceOval" || true) {
+      ctx.moveTo(points[0][0], points[0][1]);
+      for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(keypoints[points[i]][0], keypoints[points[i]][1]);
+      }
+      ctx.closePath();
+    }
     ctx.stroke();
   });
 };
