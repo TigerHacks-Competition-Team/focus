@@ -118,7 +118,8 @@ const Demo = (props) => {
   }, [focused]);
 
   const isFocused = () => {
-    return Math.abs(overallAngle.x) < 25;
+    console.log(overallAngle.y);
+    return Math.abs(overallAngle.x) < 25 && Math.abs(overallAngle.y) < 30;
   };
 
   return (
@@ -139,11 +140,13 @@ const Demo = (props) => {
       <div
         style={{
           position: "fixed",
-          top: 500,
-          left: ((overallAngle.x - 20) / -40) * 1920,
-          height: 50,
-          width: 50,
-          backgroundColor: "blue",
+          top: ((overallAngle.y - 20) / -40) * window.innerHeight,
+          left: ((overallAngle.x - 20) / -40) * window.innerWidth,
+          height: 100,
+          width: 100,
+          borderRadius: 50,
+          backgroundColor: "rgba(207, 207, 196, 0.2)",
+          zIndex: 1,
         }}
       />
     </div>

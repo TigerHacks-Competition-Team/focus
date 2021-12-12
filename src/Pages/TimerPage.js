@@ -4,6 +4,9 @@ import NavBar from "../Components/NavBar";
 import { Card, Flex, View, Heading, Button } from "@aws-amplify/ui-react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import Demo from "../Demo.js";
+import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import useSound from "use-sound";
+import alarm from "../alarm.mp3";
 
 /*const timeRotation = [
   { state: "focus", time: 1500 },
@@ -60,6 +63,9 @@ const TimerPage = () => {
   const [focused, setFocused] = useState(true);
   const [focusSwitchTimes, setFocusSwitchTimes] = useState([]);
   const [started, setStarted] = useState(false);
+  const [focusedTime, setFocusedTime] = useState([]);
+
+  const [play] = useSound(alarm);
 
   function str_pad_left(string, pad, length) {
     return (new Array(length + 1).join(pad) + string).slice(-length);
@@ -105,16 +111,24 @@ const TimerPage = () => {
     }
   }, [timerIdx]);
 
+  useEffect(() => {
+    document.title = `${
+      timeRotation[timerIdx].state.charAt(0).toUpperCase() +
+      timeRotation[timerIdx].state.slice(1)
+    } ${Math.floor(remaining / 60)}:${str_pad_left(remaining % 60, "0", 2)}`;
+  }, [remaining]);
+
   const displayFocusTime = () => {
-    let { focusedTime, totalTime } = calcFocusedPercent([
+    let ft = calcFocusedPercent([
       ...focusSwitchTimes,
       { time: new Date().getTime(), focus: "end" },
     ]);
-    let percent = (focusedTime / totalTime) * 100;
-    window.alert(focusedTime);
-    window.alert(totalTime);
-    window.alert(percent);
-    window.alert(JSON.stringify(focusSwitchTimes));
+    let percentFocused = Math.floor((ft.focusedTime / ft.totalTime) * 100);
+    let precentUnfocused = 100 - percentFocused;
+    setFocusedTime([
+      { name: `Focused ${percentFocused}%`, val: percentFocused },
+      { name: `Unfocused ${precentUnfocused}%`, val: precentUnfocused },
+    ]);
   };
 
   return (
@@ -170,58 +184,77 @@ const TimerPage = () => {
           >
             {timeRotation[timerIdx].state}
           </Heading>
-          <CountdownCircleTimer
-            key={reset}
-            isPlaying={playing}
-            duration={time}
-            trailColor="transparent"
-            size={400}
-            strokeWidth={20}
-            colors={[["#fff", 1]]}
-            onComplete={() => {
-              setTimerIdx((prev) => {
-                const newIdx = (prev + 1) % timeRotation.length;
-                setTime(timeRotation[newIdx].time);
-                setRemaining(timeRotation[newIdx].time);
-                setReset((prev) => prev + 1);
-                return newIdx;
-              });
-            }}
-          >
-            {({ remainingTime }) => {
-              setRemaining(remainingTime);
-              return (
-                <p
-                  style={{
-                    fontSize: 40,
-                    fontWeight: "bold",
-                    padding: 30,
-                    textAlign: "center",
-                  }}
-                >
-                  {Math.floor(remainingTime / 60)}:
-                  {str_pad_left(remainingTime % 60, "0", 2)}
-                  <br></br>
+          {focusedTime.length > 0 && !started ? (
+            <div
+              style={{
+                padding: "16px",
+                backgroundColor: "#fff",
+                borderRadius: "16px",
+              }}
+            >
+              <BarChart width={730} height={250} data={focusedTime}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="val" fill="#8884d8" />
+              </BarChart>
+            </div>
+          ) : (
+            <CountdownCircleTimer
+              key={reset}
+              isPlaying={playing}
+              duration={time}
+              trailColor="transparent"
+              size={400}
+              strokeWidth={20}
+              colors={[["#fff", 1]]}
+              onComplete={() => {
+                play();
+                setTimerIdx((prev) => {
+                  const newIdx = (prev + 1) % timeRotation.length;
+                  setTime(timeRotation[newIdx].time);
+                  setRemaining(timeRotation[newIdx].time);
+                  setReset((prev) => prev + 1);
+                  return newIdx;
+                });
+              }}
+            >
+              {({ remainingTime }) => {
+                setRemaining(remainingTime);
+                return (
                   <p
                     style={{
-                      fontSize: 30,
-                      fontWeight: "normal",
+                      fontSize: 40,
+                      fontWeight: "bold",
+                      padding: 30,
                       textAlign: "center",
                     }}
                   >
-                    Next up{" "}
-                    {timeRotation[(timerIdx + 1) % timeRotation.length].state}{" "}
-                    for{" "}
-                    {Math.floor(
-                      timeRotation[(timerIdx + 1) % timeRotation.length].time /
-                        60
-                    )}{" "}
-                    minutes.
+                    {Math.floor(remainingTime / 60)}:
+                    {str_pad_left(remainingTime % 60, "0", 2)}
+                    <br></br>
+                    <p
+                      style={{
+                        fontSize: 30,
+                        fontWeight: "normal",
+                        textAlign: "center",
+                      }}
+                    >
+                      Next up{" "}
+                      {timeRotation[(timerIdx + 1) % timeRotation.length].state}{" "}
+                      for{" "}
+                      {Math.floor(
+                        timeRotation[(timerIdx + 1) % timeRotation.length]
+                          .time / 60
+                      )}{" "}
+                      minutes.
+                    </p>
                   </p>
-                </p>
-              );
-            }}
-          </CountdownCircleTimer>
+                );
+              }}
+            </CountdownCircleTimer>
+          )}
           <div
             style={{
               marginTop: "32px",
@@ -264,7 +297,7 @@ const TimerPage = () => {
                 End
               </Button>
             )}
-            {!playing && remaining < time && (
+            {!playing && remaining < time && started && (
               <Button
                 style={styles.button}
                 onClick={() => {

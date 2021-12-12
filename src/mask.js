@@ -73,52 +73,20 @@ const drawMask = (ctx, keypoints) => {
     ctx.beginPath();
     if (key == "leftIris") {
       ctx.strokeStyle = "transparent";
-      ctx.fillStyle = "red";
+      ctx.fillStyle = "white";
       const { leftIris, leftEye } = getEyeAngle({ scaledMesh: keypoints });
       console.log(`irisX: ${leftIris.angleX}`);
       ctx.fillRect(leftIris.x - 2.5, leftIris.y - 2.5, 5, 5);
     } else if (key == "rightIris") {
       ctx.strokeStyle = "transparent";
-      ctx.fillStyle = "blue";
+      ctx.fillStyle = "white";
       const { rightIris } = getEyeAngle({ scaledMesh: keypoints });
       ctx.fillRect(rightIris.x - 2.5, rightIris.y - 2.5, 5, 5);
-    } else if (key == "leftEye") {
-      ctx.strokeStyle = "black";
-      ctx.fillStyle = "black";
-      const { leftEye, leftIris } = getEyeAngle({ scaledMesh: keypoints });
-      ctx.fillRect(leftEye.x - 2.5, leftEye.y - 2.5, 5, 5);
-      console.log(leftEye.x);
-      ctx.strokeRect(
-        leftEye.x - leftEye.width / 2,
-        leftEye.y - leftEye.height / 2,
-        leftEye.width,
-        leftEye.height
-      );
-      ctx.strokeStyle = "transparent";
-    } else if (key == "rightEye") {
-      ctx.strokeStyle = "black";
-      ctx.fillStyle = "black";
-      const { rightEye, rightIris } = getEyeAngle({ scaledMesh: keypoints });
-      ctx.fillRect(rightEye.x - 2.5, rightEye.y - 2.5, 5, 5);
-      ctx.strokeRect(
-        rightEye.x - rightEye.width / 2,
-        rightEye.y - rightEye.height / 2,
-        rightEye.width,
-        rightEye.height
-      );
-      ctx.strokeStyle = "transparent";
     } else if (key == "faceOval") {
       const { rightEye, rightIris, leftEye, leftIris } = getEyeAngle({
         scaledMesh: keypoints,
       });
-      ctx.fillRect(rightEye.x - 2.5, rightEye.y - 2.5, 5, 5);
-      ctx.strokeRect(
-        rightEye.x - rightEye.width / 2,
-        rightEye.y - rightEye.height / 2,
-        rightEye.width,
-        rightEye.height
-      );
-      ctx.strokeStyle = "purple";
+      ctx.strokeStyle = "white";
       const newPointRight = {};
       newPointRight.x = (rightIris.x - rightEye.x) * 10;
       newPointRight.y = (rightIris.y - rightEye.y) * 10;
@@ -143,7 +111,7 @@ const drawMask = (ctx, keypoints) => {
         y1: (rightEye.y + leftEye.y) / 2 - (rightEye.x - leftEye.x) / 2,
       };
 
-      ctx.strokeStyle = "green";
+      ctx.strokeStyle = "white";
       const { xAngle, yAngle } = getAngle([{ scaledMesh: keypoints }]);
 
       newPoint2.x2 = newPoint2.x1 + xAngle;
@@ -153,12 +121,12 @@ const drawMask = (ctx, keypoints) => {
       ctx.lineTo(newPoint2.x2, newPoint2.y2);
       ctx.closePath();
       ctx.stroke();
-    } else ctx.strokeStyle = "black";
+    } else ctx.strokeStyle = "white";
     ctx.closePath();
     ctx.stroke();
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.beginPath();
-    if (key == "faceOval" || true) {
+    if (true) {
       ctx.moveTo(points[0][0], points[0][1]);
       for (let i = 1; i < points.length; i++) {
         ctx.lineTo(keypoints[points[i]][0], keypoints[points[i]][1]);

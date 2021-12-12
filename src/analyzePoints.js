@@ -61,8 +61,8 @@ export const averageAngles = (measures) => {
 export const overallXAngle = (prediction) => {
   const { xAngle, yAngle } = getAngle(prediction);
   const coords = getEyeAngle(prediction[0]);
-  const xEyeAngle = (coords.leftIris.angleX + coords.rightIris.angleX) / 2;
-  const eyeScalar = 2;
+  const xEyeAngle = (coords.leftIris.angleX + coords.rightIris.angleX) / 2 - 2;
+  const eyeScalar = 4;
 
   console.log("xFaceAngle: " + xAngle);
   console.log("xEyeAngle: " + xEyeAngle);
@@ -76,14 +76,13 @@ export const overallYAngle = (prediction) => {
   const width = (coords.leftEye.width + coords.rightEye.width) / 2;
   const height = (coords.leftEye.height + coords.rightEye.height) / 2;
   const yEyeAngle =
-    (coords.leftIris.angleY + coords.rightIris.angleY) / 2 / (height / width) +
-    3;
+    (coords.leftIris.angleY + coords.rightIris.angleY) / 2 / (height / width);
   const eyeScalar = 5;
 
   console.log("xFaceAngle: " + yAngle);
   console.log("xEyeAngle: " + yEyeAngle);
 
-  return yAngle + eyeScalar * yEyeAngle;
+  return yAngle;
 };
 
 export const getAngle = (prediction) => {
@@ -117,7 +116,7 @@ const irises = {
 export const getEyeAngle = (prediction) => {
   const keypoints = prediction.scaledMesh;
   const hFOV = 35;
-  const vFOV = 35;
+  const vFOV = 25;
 
   var leftIrisX = 0;
   var leftIrisY = 0;
