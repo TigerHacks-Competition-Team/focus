@@ -18,15 +18,15 @@ import alarm from "../alarm.mp3";
   { state: "focus", time: 1500 },
   { state: "break", time: 900 },
 ];*/
-const timeRotation = [
-  { state: "focus", time: 15 },
-  { state: "break", time: 3 },
-  { state: "focus", time: 15 },
-  { state: "break", time: 3 },
-  { state: "focus", time: 15 },
-  { state: "break", time: 3 },
-  { state: "focus", time: 15 },
-  { state: "break", time: 9 },
+var timeRotation = [
+  { state: "focus", time: 1500 },
+  { state: "break", time: 300 },
+  { state: "focus", time: 1500 },
+  { state: "break", time: 300 },
+  { state: "focus", time: 1500 },
+  { state: "break", time: 300 },
+  { state: "focus", time: 1500 },
+  { state: "break", time: 900 },
 ];
 
 const calcFocusedPercent = (focusSwitchTimes) => {
@@ -54,7 +54,7 @@ const calcFocusedPercent = (focusSwitchTimes) => {
   return { focusedTime, totalTime };
 };
 
-const TimerPage = () => {
+const TimerPage = (props) => {
   const [playing, setPlaying] = useState(false);
   const [timerIdx, setTimerIdx] = useState(0);
   const [time, setTime] = useState(timeRotation[timerIdx].time);
@@ -70,6 +70,24 @@ const TimerPage = () => {
   function str_pad_left(string, pad, length) {
     return (new Array(length + 1).join(pad) + string).slice(-length);
   }
+
+  useEffect(() => {
+    if (props.demo) {
+      timeRotation = [
+        { state: "focus", time: 15 },
+        { state: "break", time: 3 },
+        { state: "focus", time: 15 },
+        { state: "break", time: 3 },
+        { state: "focus", time: 15 },
+        { state: "break", time: 3 },
+        { state: "focus", time: 15 },
+        { state: "break", time: 9 },
+      ];
+      setTime(timeRotation[timerIdx].time);
+      setRemaining(timeRotation[timerIdx].time);
+      setReset((prev) => prev + 1);
+    }
+  }, [props.demo]);
 
   useEffect(() => {
     if (started) {
@@ -187,6 +205,7 @@ const TimerPage = () => {
             }}
           >
             {timeRotation[timerIdx].state}
+            {props.demo && " Demo"}
           </Heading>
           {focusedTime.length > 0 && !started ? (
             <div

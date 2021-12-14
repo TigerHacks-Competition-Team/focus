@@ -32,19 +32,16 @@ const Demo = (props) => {
   const [focused, setFocused] = useState(true);
 
   const loop = true;
-  const consoleOuput = false;
+  const consoleOuput = true;
 
   const runPredict = async () => {
     if (consoleOuput) {
       console.log("loading model");
     }
-    setModel(
-      await faceLandmarksDetection.load(
-        faceLandmarksDetection.SupportedPackages.mediapipeFacemesh
-      )
-    );
+    faceLandmarksDetection
+      .load(faceLandmarksDetection.SupportedPackages.mediapipeFacemesh)
+      .then((m) => setModel(m));
     setLoaded(true);
-    detect(model);
   };
   const detect = async (model) => {
     const t0 = new Date().getTime();
@@ -108,10 +105,15 @@ const Demo = (props) => {
       if (model === null) {
         runPredict();
       } else {
+        console.log("detecting");
         detect(model);
       }
     }
-  }, [videoRef, tog]);
+  }, [videoRef, tog, model]);
+
+  useEffect(() => {
+    console.log(`model loaded: ${model ? "yes" : "no"}`);
+  }, [model]);
 
   useEffect(() => {
     props.focusChange(focused);

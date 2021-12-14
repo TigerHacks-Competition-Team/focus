@@ -34,10 +34,18 @@ const HomePage = () => {
           <Button
             style={styles.button}
             onClick={() => {
+              window.location.href = "/demo";
+            }}
+          >
+            Try the Demo
+          </Button>
+          <Button
+            style={{ ...styles.button, marginLeft: "16px" }}
+            onClick={() => {
               window.location.href = "/timer";
             }}
           >
-            Try it now
+            Start a Session
           </Button>
         </View>
       </div>

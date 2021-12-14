@@ -19,6 +19,9 @@ const App = ({ signOut, user }) => {
         <Route path="/timer">
           <TimerPage />
         </Route>
+        <Route path="/demo">
+          <TimerPage demo />
+        </Route>
       </Switch>
     </Router>
   );
