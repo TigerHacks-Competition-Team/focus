@@ -30,6 +30,9 @@ const Demo = (props) => {
   const [overallAngle, setOverallAngle] = useState(0);
   const [angleMeasures, setAngleMeasures] = useState([]);
   const [focused, setFocused] = useState(true);
+  const [calibrateState, setCalibrateState] = useState(3);
+  const [calibration, setCalibration] = useState([]);
+  const [calibrating, setCalibrating] = useState(false);
 
   const loop = true;
   const consoleOuput = true;
@@ -43,73 +46,93 @@ const Demo = (props) => {
       .then((m) => setModel(m));
     setLoaded(true);
   };
-  const detect = async (model) => {
-    const t0 = new Date().getTime();
-    if (videoRef.current) {
-      const webcamCurrent = videoRef.current;
-      const videoWidth = webcamCurrent.video.videoWidth;
-      const videoHeight = webcamCurrent.video.videoHeight;
-      // go next step only when the video is completely uploaded.
-      if (webcamCurrent.video.readyState === 4) {
-        if (first) {
-          setFirst(false);
-          canvasRef.current.width = videoWidth;
-          canvasRef.current.height = videoHeight;
-        }
-        const video = webcamCurrent.video;
-        const predictions = await model.estimateFaces({
-          input: video,
-        });
-        if (predictions.length) {
-          if (consoleOuput) {
-            console.log(predictions);
+  const detect = (model) => {
+    return new Promise(async (resolve, reject) => {
+      const t0 = new Date().getTime();
+      if (videoRef.current) {
+        const webcamCurrent = videoRef.current;
+        const videoWidth = webcamCurrent.video.videoWidth;
+        const videoHeight = webcamCurrent.video.videoHeight;
+        // go next step only when the video is completely uploaded.
+        if (webcamCurrent.video.readyState === 4) {
+          if (first) {
+            setFirst(false);
+            canvasRef.current.width = videoWidth;
+            canvasRef.current.height = videoHeight;
           }
-          if (!loop) {
-            setDone(true);
-          }
-          const ctx = canvasRef.current.getContext("2d");
-          requestAnimationFrame(() => {
-            if (consoleOuput) {
-              console.log("drawing");
-            }
-            draw(predictions, ctx, videoWidth, videoHeight);
-            setDist(getDistance(predictions));
-            const { xAngle, yAngle } = getAngle(predictions);
-            setXAngle(xAngle);
-            setYAngle(yAngle);
-            setAngleMeasures((prev) => {
-              const msrs = [...prev];
-              if (msrs.length >= 10) {
-                msrs.splice(0, 1);
-              }
-              msrs.push({
-                x: overallXAngle(predictions),
-                y: overallYAngle(predictions),
-              });
-              setOverallAngle(averageAngles(msrs));
-              return msrs;
-            });
-            setFocused(isFocused());
+          const video = webcamCurrent.video;
+          const predictions = await model.estimateFaces({
+            input: video,
           });
+          if (predictions.length) {
+            if (consoleOuput) {
+              console.log(predictions);
+            }
+            if (!loop) {
+              setDone(true);
+            }
+            const ctx = canvasRef.current.getContext("2d");
+            requestAnimationFrame(() => {
+              if (consoleOuput) {
+                console.log("drawing");
+              }
+              draw(predictions, ctx, videoWidth, videoHeight);
+              setDist(getDistance(predictions));
+              const { xAngle, yAngle } = getAngle(predictions);
+              setXAngle(xAngle);
+              setYAngle(yAngle);
+              setAngleMeasures((prev) => {
+                const msrs = [...prev];
+                if (msrs.length >= 10) {
+                  msrs.splice(0, 1);
+                }
+                msrs.push({
+                  x: overallXAngle(predictions),
+                  y: overallYAngle(predictions),
+                });
+                const avg = averageAngles(msrs);
+                setOverallAngle(avg);
+                resolve(avg);
+                return msrs;
+              });
+              setFocused(isFocused());
+            });
 
-          const t1 = new Date().getTime();
-          setFrames(1 / ((t1 - t0) / 1000));
-          //detect(model)
+            const t1 = new Date().getTime();
+            setFrames(1 / ((t1 - t0) / 1000));
+            //detect(model)
+          }
         }
       }
-    }
-    setTog(!tog);
+      setTog(!tog);
+    });
   };
+
+  const calibrate = async () => {
+    const newCalibration = [];
+    for (let i = 0; i < 4; i++) {
+      console.log("calibrating: " + i);
+      setAngleMeasures([]);
+      setCalibrateState(i);
+      const pt = await detect(model).catch((err) => console.warn(err));
+      if (i % 2 == 0) newCalibration.push(pt.y);
+      else newCalibration.push(pt.x);
+    }
+    setCalibration(newCalibration);
+  };
+
   useEffect(() => {
     if (!done) {
       if (model === null) {
         runPredict();
-      } else {
-        console.log("detecting");
+      } else if (!calibrating && calibration.length == 4) {
+        //console.log("detecting");
         detect(model);
+      } else if (!calibrating) {
+        calibrate();
       }
     }
-  }, [videoRef, tog, model]);
+  }, [videoRef, tog, model, calibrating]);
 
   useEffect(() => {
     console.log(`model loaded: ${model ? "yes" : "no"}`);
@@ -149,6 +172,26 @@ const Demo = (props) => {
           borderRadius: 50,
           backgroundColor: "rgba(207, 207, 196, 0.2)",
           zIndex: 1,
+        }}
+      />
+      <div
+        style={{
+          position: "fixed",
+          height: 100,
+          width: 100,
+          backgroundColor: "red",
+          top:
+            calibrateState == 0
+              ? 0
+              : calibrateState == 1 || calibrateState == 3
+              ? window.innerHeight / 2 - 50
+              : window.innerHeight - 100,
+          left:
+            calibrateState == 0 || calibrateState == 2
+              ? window.innerWidth / 2 - 50
+              : calibrateState == 1
+              ? window.innerWidth - 100
+              : 0,
         }}
       />
     </div>

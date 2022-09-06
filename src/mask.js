@@ -75,7 +75,7 @@ const drawMask = (ctx, keypoints) => {
       ctx.strokeStyle = "transparent";
       ctx.fillStyle = "white";
       const { leftIris, leftEye } = getEyeAngle({ scaledMesh: keypoints });
-      console.log(`irisX: ${leftIris.angleX}`);
+      //console.log(`irisX: ${leftIris.angleX}`);
       ctx.fillRect(leftIris.x - 2.5, leftIris.y - 2.5, 5, 5);
     } else if (key == "rightIris") {
       ctx.strokeStyle = "transparent";

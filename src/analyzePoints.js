@@ -64,8 +64,8 @@ export const overallXAngle = (prediction) => {
   const xEyeAngle = (coords.leftIris.angleX + coords.rightIris.angleX) / 2 - 2;
   const eyeScalar = 4;
 
-  console.log("xFaceAngle: " + xAngle);
-  console.log("xEyeAngle: " + xEyeAngle);
+  //console.log("xFaceAngle: " + xAngle);
+  //console.log("xEyeAngle: " + xEyeAngle);
 
   return xAngle + eyeScalar * xEyeAngle;
 };
@@ -79,8 +79,8 @@ export const overallYAngle = (prediction) => {
     (coords.leftIris.angleY + coords.rightIris.angleY) / 2 / (height / width);
   const eyeScalar = 5;
 
-  console.log("xFaceAngle: " + yAngle);
-  console.log("xEyeAngle: " + yEyeAngle);
+  //console.log("xFaceAngle: " + yAngle);
+  //console.log("xEyeAngle: " + yEyeAngle);
 
   return yAngle;
 };
